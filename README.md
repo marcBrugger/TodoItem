@@ -6,9 +6,11 @@
 
 ### How to start
 1. open docker (desktop)
-2. open a terminal in the backend and enter 
+2. open a **terminal in the backend** and enter 
 > docker compose up
-3. open a second terminal in the backend and enter
+3. open a **second terminal in the backend**
+	- and make sure to have set a **MAVEN_HOME environment variable**
+	- then enter
 > mvn spring-boot:run
 
 You can now use the SWAGGER UI to CRUD Todo Items into the DB
