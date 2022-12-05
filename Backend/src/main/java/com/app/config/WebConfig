@@ -1,0 +1,22 @@
+//package com.app.config;
+/*
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.web.cors.CorsConfiguration;
+
+@Configuration
+@EnableWebSecurity
+@EnableWebMvc
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    protected void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+            .allowedOrigins("http://localhost:5500/*")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE")
+            .allowedHeaders("Authorization", "Cache-Control", "Content-Type")
+            .exposedHeaders("Authorization")
+            .allowedCredentials(false).maxAge(3600);
+    }
+}
+*/
