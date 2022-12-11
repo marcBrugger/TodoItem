@@ -1,12 +1,6 @@
 package com.app.todo;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
-//import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +27,6 @@ public class ApiController {
         @ApiResponse(responseCode = "201", description = "Item has been created" , content = @Content)
     })
     @ResponseStatus(HttpStatus.CREATED)*/
-    //@CrossOrigin(origins = "http://localhost:*")
     @PostMapping(path="/") // Map ONLY POST Requests
     public @ResponseBody String createAndAddTodoItem (@RequestParam String name) {
         // @ResponseBody means the returned String is the response, not a view name
