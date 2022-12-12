@@ -25,7 +25,7 @@ public class ApiController {
     @Autowired
     private TodoRepositiory todoRepo;
 
-    @Operation(summary = "Creates a Todo Item with a request parameter name and a default priority of 2")
+    @Operation(summary = "Creates a todo item via a request parameter name and sets the default priority to 2")
     //@ApiResponses(value = { @ApiResponse(code=200, message="success")})
     @ApiResponses(value = {
         //@ApiResponse(responseCode = "201", description = "Item has been created" , content = @Content)
@@ -48,12 +48,14 @@ public class ApiController {
         }
     }
 /* 
+    @Operation(summary = "Creates a Todo Item with a request parameter name and a default priority of 2")
     @PostMapping(path="/") 
     public @ResponseBody String createTodoItem (@RequestParam TodoItem item) {
         todoRepo.save(item);
         return "Saved a new item";
     }
 */
+    @Operation(summary = "Get all items via a response body")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path="/")
     public @ResponseBody Iterable<TodoItem> getTodoItems() {
@@ -64,6 +66,7 @@ public class ApiController {
         return todoRepo.findAll();
     }
 
+    @Operation(summary = "Get one specific item via a path variable")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path="/{name}")
     public @ResponseBody java.util.Optional<TodoItem> getTodoItemsById(@PathVariable String name) {
@@ -83,7 +86,7 @@ public class ApiController {
         return "Item updated";
     }
     */
-    @Operation(summary = "Exchange the priotity of an item")
+    @Operation(summary = "Exchange the priotity of an item via a request parameter")
 	@ApiResponses(value= 
 	{
 			//@ApiResponse(responseCode = "204", description = "Item has been updated", content = @Content)
@@ -101,6 +104,7 @@ public class ApiController {
         }
     }
 
+    @Operation(summary = "Deletes one item via a request parameter")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(path="/")
     public @ResponseBody String deleteTodoItem (@RequestParam String name){
@@ -113,6 +117,7 @@ public class ApiController {
         }
     }
 
+    @Operation(summary = "Deletes one item via a path variable")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(path="/{name}")
     public @ResponseBody String deleteTodoItemById (@PathVariable String name){
