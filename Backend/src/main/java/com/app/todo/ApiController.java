@@ -5,12 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 // http://localhost:8080/swagger-ui/index.html
 // http://localhost:8080/v3/api-docs/
 
 //CRUD Controller class
 //Create Read Update Delete
-    
+
 @RestController
 @Controller
 @CrossOrigin(origins = "http://127.0.0.1:5500", maxAge = 3600)
@@ -21,21 +25,27 @@ public class ApiController {
     @Autowired
     private TodoRepositiory todoRepo;
 
-    /*@Operation(summary = "Creates a Todo Item with path variable name and default priority of 2")
-    @ApiResponses(value = 
-    {
-        @ApiResponse(responseCode = "201", description = "Item has been created" , content = @Content)
+    @Operation(summary = "Creates a Todo Item with a request parameter name and a default priority of 2")
+    //@ApiResponses(value = { @ApiResponse(code=200, message="success")})
+    @ApiResponses(value = {
+        //@ApiResponse(responseCode = "201", description = "Item has been created" , content = @Content)
     })
-    @ResponseStatus(HttpStatus.CREATED)*/
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path="/") // Map ONLY POST Requests
     public @ResponseBody String createAndAddTodoItem (@RequestParam String name) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
         TodoItem item = new TodoItem();
-        item.setTodo(name);
-        todoRepo.save(item);
-        return "Created and Saved a new item";
+        //boolean checkAvailable = todoRepo.findById(name);
+        if(todoRepo.findById(name).isPresent() == true){
+            return "Already existing";
+        }else{
+            System.out.println(todoRepo.findById(name));
+            item.setTodo(name);
+            todoRepo.save(item);
+            return "Created and Saved a new item";
+        }
     }
 /* 
     @PostMapping(path="/") 
@@ -44,6 +54,7 @@ public class ApiController {
         return "Saved a new item";
     }
 */
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(path="/")
     public @ResponseBody Iterable<TodoItem> getTodoItems() {
         // This returns a JSON or XML with the users
@@ -53,11 +64,16 @@ public class ApiController {
         return todoRepo.findAll();
     }
 
-    @GetMapping(path="/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path="/{name}")
     public @ResponseBody java.util.Optional<TodoItem> getTodoItemsById(@PathVariable String name) {
-
-        return todoRepo.findById(name);
-        //return todoRepo.findOne(id);
+        if(todoRepo.findById(name).isPresent() == true){
+            return todoRepo.findById(name);
+            //return todoRepo.findOne(id);
+        }else{
+            // in case id is not existing
+            return null;
+        }
     }
  /* 
     @PutMapping(path="/{id}")
@@ -67,23 +83,45 @@ public class ApiController {
         return "Item updated";
     }
     */
+    @Operation(summary = "Exchange the priotity of an item")
+	@ApiResponses(value= 
+	{
+			//@ApiResponse(responseCode = "204", description = "Item has been updated", content = @Content)
+	})
+	@ResponseStatus(HttpStatus.OK)
     @PutMapping(path="/")
     public @ResponseBody String updateTodoItem (@RequestBody TodoItem item){
-        todoRepo.save(item);
-        return "Item updated";
+        String name = item.getTodo();
+        if(todoRepo.findById(name).isPresent() == true){
+            todoRepo.save(item);
+            return "Item updated";
+        }else{
+            // in case id is not existing
+            return "Can not update a non existing item";
+        }
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(path="/")
     public @ResponseBody String deleteTodoItem (@RequestParam String name){
-        todoRepo.deleteById(name); //name = id
-        return "Item deleted";
+        if(todoRepo.findById(name).isPresent() == true){
+            todoRepo.deleteById(name); //name = id
+            return "Item deleted";
+        }else{
+            // in case id is not existing
+            return "Item isn't existing";
+        }
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(path="/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(path="/{name}")
     public @ResponseBody String deleteTodoItemById (@PathVariable String name){
-        todoRepo.deleteById(name);
-        return "Item deleted";
+        if(todoRepo.findById(name).isPresent() == true){
+            todoRepo.deleteById(name); //name = id
+            return "Item deleted";
+        }else{
+            // in case id is not existing
+            return "Item isn't existing";
+        }
     }    
 }
