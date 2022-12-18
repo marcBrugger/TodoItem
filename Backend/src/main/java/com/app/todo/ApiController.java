@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
+//import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 // http://localhost:8080/swagger-ui/index.html
@@ -25,7 +25,7 @@ public class ApiController {
     @Autowired
     private TodoRepositiory todoRepo;
 
-    @Operation(summary = "Creates a todo item via a request parameter name and sets the default priority to 2")
+    @Operation(summary = "Creates a todo item via a request parameter 'name' and sets the default priority to 2")
     //@ApiResponses(value = { @ApiResponse(code=200, message="success")})
     @ApiResponses(value = {
         //@ApiResponse(responseCode = "201", description = "Item has been created" , content = @Content)
@@ -33,6 +33,29 @@ public class ApiController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path="/") // Map ONLY POST Requests
     public @ResponseBody String createAndAddTodoItem (@RequestParam String name) {
+        // @ResponseBody means the returned String is the response, not a view name
+        // @RequestParam means it is a parameter from the GET or POST request
+
+        TodoItem item = new TodoItem();
+        //boolean checkAvailable = todoRepo.findById(name);
+        if(todoRepo.findById(name).isPresent() == true){
+            return "Already existing";
+        }else{
+            System.out.println(todoRepo.findById(name));
+            item.setTodo(name);
+            todoRepo.save(item);
+            return "Created and Saved a new item";
+        }
+    }
+
+    @Operation(summary = "Creates a todo item via a path variable 'name' and sets the default priority to 2")
+    //@ApiResponses(value = { @ApiResponse(code=200, message="success")})
+    @ApiResponses(value = {
+        //@ApiResponse(responseCode = "201", description = "Item has been created" , content = @Content)
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path="/{name}") // Map ONLY POST Requests
+    public @ResponseBody String createAndAddTodoItem2 (@PathVariable String name) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
@@ -55,7 +78,7 @@ public class ApiController {
         return "Saved a new item";
     }
 */
-    @Operation(summary = "Get all items via a response body")
+    @Operation(summary = "Get all items")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path="/")
     public @ResponseBody Iterable<TodoItem> getTodoItems() {
@@ -68,10 +91,10 @@ public class ApiController {
 
     @Operation(summary = "Get one specific item via a path variable")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(path="/{name}")
-    public @ResponseBody java.util.Optional<TodoItem> getTodoItemsById(@PathVariable String name) {
-        if(todoRepo.findById(name).isPresent() == true){
-            return todoRepo.findById(name);
+    @GetMapping(path="/id/{id}")
+    public @ResponseBody java.util.Optional<TodoItem> getTodoItemsById(@PathVariable String id) {
+        if(todoRepo.findById(id).isPresent() == true){
+            return todoRepo.findById(id);
             //return todoRepo.findOne(id);
         }else{
             // in case id is not existing
@@ -86,7 +109,7 @@ public class ApiController {
         return "Item updated";
     }
     */
-    @Operation(summary = "Exchange the priotity of an item via a request parameter")
+    @Operation(summary = "Exchange the priotity of an item via a request body")
 	@ApiResponses(value= 
 	{
 			//@ApiResponse(responseCode = "204", description = "Item has been updated", content = @Content)
@@ -107,9 +130,9 @@ public class ApiController {
     @Operation(summary = "Deletes one item via a request parameter")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(path="/")
-    public @ResponseBody String deleteTodoItem (@RequestParam String name){
-        if(todoRepo.findById(name).isPresent() == true){
-            todoRepo.deleteById(name); //name = id
+    public @ResponseBody String deleteTodoItem (@RequestParam String id){
+        if(todoRepo.findById(id).isPresent() == true){
+            todoRepo.deleteById(id); //name = id
             return "Item deleted";
         }else{
             // in case id is not existing
@@ -119,10 +142,10 @@ public class ApiController {
 
     @Operation(summary = "Deletes one item via a path variable")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(path="/{name}")
-    public @ResponseBody String deleteTodoItemById (@PathVariable String name){
-        if(todoRepo.findById(name).isPresent() == true){
-            todoRepo.deleteById(name); //name = id
+    @DeleteMapping(path="/{id}")
+    public @ResponseBody String deleteTodoItemById (@PathVariable String id){
+        if(todoRepo.findById(id).isPresent() == true){
+            todoRepo.deleteById(id); //name = id
             return "Item deleted";
         }else{
             // in case id is not existing
